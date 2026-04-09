@@ -60,23 +60,25 @@ export default function MyBooksPage() {
   if (loading) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-zinc-500">Loading your books...</p>
+        <p className="text-white font-black text-xl">Loading your books...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col flex-1 px-6 py-10 font-sans">
+    <div className="flex flex-col flex-1 px-6 py-10">
       <div className="max-w-5xl mx-auto w-full">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">My Books</h1>
-        <p className="text-zinc-500 mb-8">
+        <h1 className="text-5xl font-black tracking-tight text-white drop-shadow-lg mb-1">
+          My Books
+        </h1>
+        <p className="text-pink-200 font-bold mb-8 text-lg">
           {books.length} {books.length === 1 ? "book" : "books"} in your collection
         </p>
 
         {books.length === 0 ? (
-          <p className="text-zinc-400">
+          <p className="text-white font-bold">
             You haven&apos;t saved any books yet.{" "}
-            <a href="/search" className="underline">
+            <a href="/search" className="underline text-pink-100 hover:text-white">
               Search for some!
             </a>
           </p>
@@ -85,7 +87,7 @@ export default function MyBooksPage() {
             {books.map((book) => (
               <div
                 key={book.id}
-                className="group relative flex flex-col rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+                className="group flex flex-col rounded-2xl border-2 border-[#ff69b4] bg-white p-3 shadow-lg transition hover:shadow-2xl hover:scale-105 hover:border-[#ff1493]"
               >
                 {book.cover_url ? (
                   <Image
@@ -93,22 +95,22 @@ export default function MyBooksPage() {
                     alt={book.title}
                     width={160}
                     height={240}
-                    className="w-full aspect-[2/3] object-cover rounded-lg mb-3"
+                    className="w-full aspect-[2/3] object-cover rounded-xl mb-3"
                   />
                 ) : (
-                  <div className="w-full aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 rounded-lg mb-3 flex items-center justify-center text-xs text-zinc-400">
+                  <div className="w-full aspect-[2/3] bg-pink-200 rounded-xl mb-3 flex items-center justify-center text-xs text-[#ff69b4] font-black">
                     No cover
                   </div>
                 )}
-                <p className="text-sm font-semibold leading-tight line-clamp-2">
+                <p className="text-sm font-black leading-tight line-clamp-2 text-[#c2185b]">
                   {book.title}
                 </p>
-                <p className="text-xs text-zinc-500 mt-1 line-clamp-1">
+                <p className="text-xs text-[#ff69b4] mt-1 line-clamp-1 font-bold">
                   {book.author}
                 </p>
                 <button
                   onClick={() => removeBook(book.id)}
-                  className="mt-2 rounded-full border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+                  className="mt-2 rounded-full bg-white border-2 border-[#ff69b4] px-3 py-1 text-xs font-black text-[#ff69b4] hover:bg-[#ff69b4] hover:text-white transition"
                 >
                   Remove
                 </button>

@@ -58,8 +58,8 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 items-center px-4 py-12 font-sans">
-      <h1 className="text-2xl font-semibold mb-6">Search Books</h1>
+    <div className="flex flex-col flex-1 items-center px-4 py-12">
+      <h1 className="text-5xl font-black text-white drop-shadow-lg mb-6">Search Books</h1>
 
       <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-md mb-8">
         <input
@@ -67,23 +67,23 @@ export default function SearchPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by title..."
-          className="flex-1 rounded-lg border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          className="flex-1 rounded-full border-3 border-[#ff69b4] bg-white px-5 py-2.5 text-sm font-bold text-[#c2185b] placeholder:text-pink-300 focus:outline-none focus:border-[#ff1493] focus:ring-2 focus:ring-pink-300"
         />
         <button
           type="submit"
-          className="rounded-lg bg-black px-4 py-2 text-sm text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+          className="rounded-full bg-[#ff69b4] px-6 py-2.5 text-sm font-black text-white hover:bg-[#ff1493] transition shadow-lg"
         >
           Search
         </button>
       </form>
 
-      {loading && <p className="text-zinc-500">Searching...</p>}
+      {loading && <p className="text-white font-black text-lg">Searching...</p>}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full max-w-3xl">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full max-w-3xl">
         {books.map((book) => (
           <div
             key={book.key}
-            className="flex flex-col items-center rounded-lg border border-zinc-200 p-3 dark:border-zinc-700"
+            className="flex flex-col items-center rounded-2xl border-2 border-[#ff69b4] bg-white p-3 shadow-lg transition hover:shadow-2xl hover:scale-105 hover:border-[#ff1493]"
           >
             {book.cover_i ? (
               <Image
@@ -91,23 +91,23 @@ export default function SearchPage() {
                 alt={book.title}
                 width={128}
                 height={192}
-                className="rounded mb-2"
+                className="rounded-xl mb-2"
               />
             ) : (
-              <div className="w-32 h-48 bg-zinc-200 dark:bg-zinc-800 rounded mb-2 flex items-center justify-center text-xs text-zinc-500">
+              <div className="w-32 h-48 bg-pink-200 rounded-xl mb-2 flex items-center justify-center text-xs text-[#ff69b4] font-black">
                 No cover
               </div>
             )}
-            <p className="text-sm font-medium text-center line-clamp-2">
+            <p className="text-sm font-black text-center line-clamp-2 text-[#c2185b]">
               {book.title}
             </p>
-            <p className="text-xs text-zinc-500 text-center line-clamp-1">
+            <p className="text-xs text-[#ff69b4] text-center line-clamp-1 font-bold">
               {book.author_name?.[0] ?? "Unknown"}
             </p>
             <button
               onClick={() => saveFavorite(book)}
               disabled={saved.has(book.key)}
-              className="mt-2 rounded-full bg-black px-3 py-1 text-xs text-white hover:bg-zinc-800 disabled:bg-zinc-400 dark:bg-white dark:text-black dark:hover:bg-zinc-200 dark:disabled:bg-zinc-600"
+              className="mt-2 rounded-full bg-[#ff69b4] px-4 py-1 text-xs font-black text-white hover:bg-[#ff1493] disabled:bg-pink-300 transition shadow-md"
             >
               {saved.has(book.key) ? "Saved!" : "Save"}
             </button>
