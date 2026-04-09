@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession } from "@clerk/nextjs";
+import { useUser, useSession } from "@clerk/nextjs";
 import { createClerkSupabaseClient } from "@/lib/supabase";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 interface Favorite {
@@ -14,35 +14,53 @@ interface Favorite {
   ol_key: string;
 }
 
-export default function Home() {
+export default function MyBooksPage() {
+  const { user } = useUser();
   const { session } = useSession();
   const [books, setBooks] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchBooks = useCallback(async () => {
+    if (!session || !user) return;
+
+    const supabase = createClerkSupabaseClient(() =>
+      session.getToken({ template: "supabase" })
+    );
+
+    const { data } = await supabase
+      .from("favorites")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("id", { ascending: false });
+
+    setBooks(data ?? []);
+    setLoading(false);
+  }, [session, user]);
+
   useEffect(() => {
+    fetchBooks();
+  }, [fetchBooks]);
+
+  async function removeBook(id: number) {
     if (!session) return;
 
-    async function fetchBooks() {
-      const supabase = createClerkSupabaseClient(() =>
-        session!.getToken({ template: "supabase" })
-      );
+    const supabase = createClerkSupabaseClient(() =>
+      session.getToken({ template: "supabase" })
+    );
 
-      const { data } = await supabase
-        .from("favorites")
-        .select("*")
-        .order("id", { ascending: false });
+    const { error } = await supabase.from("favorites").delete().eq("id", id);
 
-      setBooks(data ?? []);
-      setLoading(false);
+    if (error) {
+      alert(`Error: ${error.message}`);
+    } else {
+      setBooks((prev) => prev.filter((b) => b.id !== id));
     }
-
-    fetchBooks();
-  }, [session]);
+  }
 
   if (loading) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-zinc-500">Loading bookshelf...</p>
+        <p className="text-zinc-500">Loading your books...</p>
       </div>
     );
   }
@@ -50,27 +68,24 @@ export default function Home() {
   return (
     <div className="flex flex-col flex-1 px-6 py-10 font-sans">
       <div className="max-w-5xl mx-auto w-full">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">
-          Class Bookshelf
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">My Books</h1>
         <p className="text-zinc-500 mb-8">
-          {books.length} {books.length === 1 ? "book" : "books"} saved by the class
+          {books.length} {books.length === 1 ? "book" : "books"} in your collection
         </p>
 
         {books.length === 0 ? (
           <p className="text-zinc-400">
-            No books yet. Head to{" "}
+            You haven&apos;t saved any books yet.{" "}
             <a href="/search" className="underline">
-              Search
-            </a>{" "}
-            to add some!
+              Search for some!
+            </a>
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {books.map((book) => (
               <div
                 key={book.id}
-                className="group flex flex-col rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+                className="group relative flex flex-col rounded-xl border border-zinc-200 bg-white p-3 shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
               >
                 {book.cover_url ? (
                   <Image
@@ -91,6 +106,12 @@ export default function Home() {
                 <p className="text-xs text-zinc-500 mt-1 line-clamp-1">
                   {book.author}
                 </p>
+                <button
+                  onClick={() => removeBook(book.id)}
+                  className="mt-2 rounded-full border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+                >
+                  Remove
+                </button>
               </div>
             ))}
           </div>
